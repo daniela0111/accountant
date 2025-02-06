@@ -31,17 +31,16 @@ const { width, height } = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: '#fff',
   },
   logoContainer: {
     position: 'absolute',
     top: 40,
     alignItems: 'center',
+    width: '100%',
   },
   logo: {
-    width: 200,
+    width: 300,
     height: 50,
     resizeMode: 'contain',
   },
@@ -52,12 +51,12 @@ const styles = StyleSheet.create({
     gap: 20,
     position: 'absolute',
     bottom: 20,
+    width: '100%',
   },
   preview: {
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
-    width: '100%',
   },
   captureButton: {
     width: 70,
@@ -87,8 +86,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   overlayCutout: {
-    width: width * 0.8,
-    height: height * 0.5,
+    width: width * 0.9, // Increased width to 90% of the screen
+    height: height * 0.6, // Increased height to 60% of the screen
     borderWidth: 2,
     borderColor: '#fff',
     backgroundColor: 'transparent',
