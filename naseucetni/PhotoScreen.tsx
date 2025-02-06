@@ -8,8 +8,9 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
-import { CameraView } from 'expo-camera'; // Ensure correct import
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import { shareAsync } from 'expo-sharing';
 import * as MediaLibrary from 'expo-media-library';
 import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
@@ -25,17 +26,32 @@ const databases = new Databases(client);
 
 interface PhotoScreenProps {}
 
+const { width, height } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#fff',
+  },
+  logoContainer: {
+    position: 'absolute',
+    top: 40,
+    alignItems: 'center',
+  },
+  logo: {
+    width: 200,
+    height: 50,
+    resizeMode: 'contain',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginBottom: 20,
     gap: 20,
+    position: 'absolute',
+    bottom: 20,
   },
   preview: {
     flex: 1,
@@ -55,6 +71,36 @@ const styles = StyleSheet.create({
     fontSize: 16,
     padding: 10,
   },
+  instructionText: {
+    fontSize: 18,
+    color: '#000',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  overlayCutout: {
+    width: width * 0.8,
+    height: height * 0.5,
+    borderWidth: 2,
+    borderColor: '#fff',
+    backgroundColor: 'transparent',
+  },
+  overlayBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
 });
 
 const PhotoScreen: React.FC<PhotoScreenProps> = () => {
@@ -67,21 +113,28 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
   const [selectedCollection] = useState<string>('67a48b3e002354d58d73'); // Replace with your collection ID
   const cameraRef = useRef<CameraView>(null);
 
+  // Use the useCameraPermissions hook to handle camera permissions
+  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+
   useEffect(() => {
     (async () => {
       try {
-        const cameraPermission = await CameraView.requestCameraPermissionsAsync();
+        // Request camera permissions
+        if (!cameraPermission?.granted) {
+          await requestCameraPermission();
+        }
+
+        // Request media library permissions
         const mediaLibraryPermission = await MediaLibrary.requestPermissionsAsync();
-        setHasCameraPermission(cameraPermission.status === 'granted');
         setHasMediaLibraryPermission(mediaLibraryPermission.status === 'granted');
       } catch (error) {
         console.error('Permission error:', error);
       }
     })();
-  }, []);
+  }, [cameraPermission]);
 
   const handleTakePicture = async () => {
-    if (hasCameraPermission && cameraRef.current) {
+    if (cameraPermission?.granted && cameraRef.current) {
       try {
         const data = await cameraRef.current.takePictureAsync({
           quality: 0.8,
@@ -184,6 +237,17 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
 
   return (
     <View style={styles.container}>
+      {/* Logo at the top */}
+      <View style={styles.logoContainer}>
+        <Image
+          source={require('./assets/logo.png')} // Replace with the path to your logo image
+          style={styles.logo}
+        />
+        <Text style={styles.instructionText}>Accounting documents</Text>
+        <Text style={styles.instructionText}>Please take a picture of the whole document</Text>
+        <Text style={styles.instructionText}>Check if the document is in focus</Text>
+      </View>
+
       {uploading && (
         <View style={StyleSheet.absoluteFill}>
           <ActivityIndicator size="large" color="#0000ff" />
@@ -217,12 +281,17 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
         </SafeAreaView>
       ) : (
         <View style={styles.container}>
-          {hasCameraPermission ? (
+          {cameraPermission?.granted ? (
             <CameraView
               style={styles.preview}
-              facing="back" // Use 'facing' instead of 'type'
+              facing="back" // Use 'facing' for CameraView
               ref={cameraRef}
             >
+              {/* Grey rectangle overlay */}
+              <View style={styles.overlay}>
+                <View style={styles.overlayBackground} />
+                <View style={styles.overlayCutout} />
+              </View>
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   style={styles.captureButton}
