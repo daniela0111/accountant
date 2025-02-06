@@ -7,19 +7,21 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
-import { Camera, CameraType } from 'expo-camera';
+import { CameraView } from 'expo-camera'; // Ensure correct import
 import { shareAsync } from 'expo-sharing';
 import * as MediaLibrary from 'expo-media-library';
 import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
-import { Client, Storage, ID } from 'appwrite';
+import { ID, Client, Storage, Databases } from 'appwrite';
 
-// Appwrite configuration
+// Appwrite Configuration
 const client = new Client()
-  .setEndpoint('https://cloud.appwrite.io/v1') // Your Appwrite endpoint
-  .setProject('YOUR_PROJECT_ID'); // Your Appwrite project ID
+  .setEndpoint('https://cloud.appwrite.io/v1') // Replace with your Appwrite endpoint
+  .setProject('67a39d4d001c684cead2'); // Replace with your project ID
 
 const storage = new Storage(client);
+const databases = new Databases(client);
 
 interface PhotoScreenProps {}
 
@@ -59,13 +61,16 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState<boolean | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
-  const [selectedCollection] = useState<string>('default');
-  const cameraRef = useRef<Camera>(null);
+  const [uploading, setUploading] = useState(false);
+  const [selectedBucket] = useState<string>('67a48afb0025416339a1'); // Replace with your bucket ID
+  const [selectedDatabase] = useState<string>('67a48b26003ac5af5e62'); // Replace with your database ID
+  const [selectedCollection] = useState<string>('67a48b3e002354d58d73'); // Replace with your collection ID
+  const cameraRef = useRef<CameraView>(null);
 
   useEffect(() => {
     (async () => {
       try {
-        const cameraPermission = await Camera.requestCameraPermissionsAsync();
+        const cameraPermission = await CameraView.requestCameraPermissionsAsync();
         const mediaLibraryPermission = await MediaLibrary.requestPermissionsAsync();
         setHasCameraPermission(cameraPermission.status === 'granted');
         setHasMediaLibraryPermission(mediaLibraryPermission.status === 'granted');
@@ -112,24 +117,45 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
   const handleImageUpload = async () => {
     if (!photo) return;
 
+    setUploading(true);
     try {
+      // Convert photo to blob
       const response = await fetch(photo);
       const blob = await response.blob();
-      const fileId = ID.unique(); // Generate a unique file ID
-      const file = new File([blob], `${fileId}.jpg`, { type: 'image/jpeg' });
 
-      const uploadResponse = await storage.createFile(
-        'YOUR_BUCKET_ID', // Replace with your Appwrite bucket ID
-        fileId,
+      // Create File object for Appwrite
+      const file = new File([blob], `photo-${Date.now()}.jpg`, {
+        type: 'image/jpeg',
+      });
+
+      // Upload to Appwrite Storage
+      const storageResponse = await storage.createFile(
+        selectedBucket,
+        ID.unique(),
         file
       );
 
-      if (uploadResponse) {
-        Alert.alert('Upload successful!');
-      }
+      // Construct public URL
+      const fileUrl = `${client.config.endpoint}/storage/buckets/${selectedBucket}/files/${storageResponse.$id}/view?project=${client.config.project}&mode=admin`;
+
+      // Save to Appwrite Database
+      await databases.createDocument(
+        selectedDatabase,
+        selectedCollection,
+        ID.unique(),
+        {
+          imageUrl: fileUrl,
+          timestamp: new Date().toISOString(),
+        }
+      );
+
+      Alert.alert('Success', 'Image uploaded successfully!');
+      setPhoto(null);
     } catch (error) {
       console.error('Upload error:', error);
-      Alert.alert('Upload failed');
+      Alert.alert('Error', 'Failed to upload image');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -158,6 +184,13 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
 
   return (
     <View style={styles.container}>
+      {uploading && (
+        <View style={StyleSheet.absoluteFill}>
+          <ActivityIndicator size="large" color="#0000ff" />
+          <Text>Uploading...</Text>
+        </View>
+      )}
+
       {photo ? (
         <SafeAreaView style={styles.container}>
           <Image
@@ -175,17 +208,19 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
             <TouchableOpacity onPress={handleShare}>
               <Text style={styles.buttonText}>Share</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleImageUpload}>
-              <Text style={styles.buttonText}>Upload</Text>
+            <TouchableOpacity onPress={handleImageUpload} disabled={uploading}>
+              <Text style={[styles.buttonText, uploading && { opacity: 0.5 }]}>
+                Upload
+              </Text>
             </TouchableOpacity>
           </View>
         </SafeAreaView>
       ) : (
         <View style={styles.container}>
           {hasCameraPermission ? (
-            <Camera
+            <CameraView
               style={styles.preview}
-              type={CameraType.back}
+              facing="back" // Use 'facing' instead of 'type'
               ref={cameraRef}
             >
               <View style={styles.buttonContainer}>
@@ -197,7 +232,7 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
                   <Text style={styles.buttonText}>Gallery</Text>
                 </TouchableOpacity>
               </View>
-            </Camera>
+            </CameraView>
           ) : (
             <Text style={styles.buttonText}>Camera permission required</Text>
           )}
