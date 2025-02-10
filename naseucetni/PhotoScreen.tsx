@@ -77,30 +77,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
   },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  overlayCutout: {
-    width: width * 0.8, // Adjusted width to 80% of the screen
-    height: height * 0.4, // Adjusted height to 40% of the screen for a rectangular shape
-    borderWidth: 2,
-    borderColor: '#fff',
-    backgroundColor: 'transparent',
-  },
-  overlayBackground: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    right: 20,
-    bottom: 50,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -202,31 +178,31 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
       Alert.alert('Error', 'No photo to upload');
       return;
     }
-  
+
     setSelectedCollection(collectionId);
     setIsModalVisible(false);
-  
+
     setUploading(true);
     try {
       // Convert photo to blob
       const response = await fetch(photo);
       const blob = await response.blob();
-  
+
       // Create File object for Appwrite
       const file = new File([blob], `photo-${Date.now()}.jpg`, {
         type: 'image/jpeg',
       });
-  
+
       // Upload to Appwrite Storage
       const storageResponse = await storage.createFile(
         selectedBucket,
         ID.unique(),
         file
       );
-  
+
       // Construct public URL
       const fileUrl = `${client.config.endpoint}/storage/buckets/${selectedBucket}/files/${storageResponse.$id}/view?project=${client.config.project}&mode=admin`;
-  
+
       // Save to Appwrite Database
       await databases.createDocument(
         selectedDatabase,
@@ -237,7 +213,7 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
           timestamp: new Date().toISOString(),
         }
       );
-  
+
       Alert.alert('Success', 'Image uploaded successfully!');
       setPhoto(null);
     } catch (error) {
@@ -312,11 +288,6 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
               facing="back" // Use 'facing' for CameraView
               ref={cameraRef}
             >
-              {/* Grey rectangle overlay */}
-              <View style={styles.overlay}>
-                <View style={styles.overlayBackground} />
-                <View style={styles.overlayCutout} />
-              </View>
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   style={styles.captureButton}
