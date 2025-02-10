@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     top: 40,
     alignItems: 'center',
     width: '100%',
+    zIndex: 1, // Ensure the logo is above the CameraView
   },
   logo: {
     width: 300,
@@ -53,11 +54,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     width: '100%',
+    color: '#060663',
   },
   preview: {
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
+  },
+  cameraContainer: {
+    height: height * 0.5, // Reduce the height of the CameraView to 60% of the screen
+    width: width * 0.9,
+    marginTop: 200, // Add margin to push the CameraView down
   },
   captureButton: {
     width: 70,
@@ -241,7 +248,7 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
       {/* Logo at the top */}
       <View style={styles.logoContainer}>
         <Image
-          source={require('./assets/logo.png')} // Replace with the path to your logo image
+          source={require('./assets/logo.png')} 
           style={styles.logo}
         />
         <Text style={styles.instructionText}>Accounting documents</Text>
@@ -283,21 +290,23 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
       ) : (
         <View style={styles.container}>
           {cameraPermission?.granted ? (
-            <CameraView
-              style={styles.preview}
-              facing="back" // Use 'facing' for CameraView
-              ref={cameraRef}
-            >
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  style={styles.captureButton}
-                  onPress={handleTakePicture}
-                />
-                <TouchableOpacity onPress={handleChooseFromLibrary}>
-                  <Text style={styles.buttonText}>Gallery</Text>
-                </TouchableOpacity>
-              </View>
-            </CameraView>
+            <View style={styles.cameraContainer}>
+              <CameraView
+                style={styles.preview}
+                facing="back" // Use 'facing' for CameraView
+                ref={cameraRef}
+              >
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={styles.captureButton}
+                    onPress={handleTakePicture}
+                  />
+                  <TouchableOpacity onPress={handleChooseFromLibrary}>
+                    <Text style={styles.buttonText}>Gallery</Text>
+                  </TouchableOpacity>
+                </View>
+              </CameraView>
+            </View>
           ) : (
             <Text style={styles.buttonText}>Camera permission required</Text>
           )}
