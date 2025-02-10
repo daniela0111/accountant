@@ -87,8 +87,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   overlayCutout: {
-    width: width * 0.9, // Increased width to 90% of the screen
-    height: height * 0.6, // Increased height to 60% of the screen
+    width: width * 0.8, // Adjusted width to 80% of the screen
+    height: height * 0.4, // Adjusted height to 40% of the screen for a rectangular shape
     borderWidth: 2,
     borderColor: '#fff',
     backgroundColor: 'transparent',

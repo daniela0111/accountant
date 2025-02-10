@@ -9,6 +9,7 @@ import {
   Alert,
   ActivityIndicator,
   Dimensions,
+  Modal,
 } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { shareAsync } from 'expo-sharing';
@@ -100,6 +101,25 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: width * 0.8,
+    padding: 20,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+  },
+  modalButton: {
+    padding: 15,
+    marginVertical: 5,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 5,
+    alignItems: 'center',
+  },
 });
 
 const PhotoScreen: React.FC<PhotoScreenProps> = () => {
@@ -109,7 +129,8 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
   const [uploading, setUploading] = useState(false);
   const [selectedBucket] = useState<string>('67a48afb0025416339a1'); // Replace with your bucket ID
   const [selectedDatabase] = useState<string>('67a48b26003ac5af5e62'); // Replace with your database ID
-  const [selectedCollection] = useState<string>('67a48b3e002354d58d73'); // Replace with your collection ID
+  const [selectedCollection, setSelectedCollection] = useState<string>('67a48b3e002354d58d73'); // Replace with your collection ID
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const cameraRef = useRef<CameraView>(null);
 
   // Use the useCameraPermissions hook to handle camera permissions
@@ -169,38 +190,50 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
   const handleImageUpload = async () => {
     if (!photo) return;
 
+    setIsModalVisible(true);
+  };
+
+  const handleDocumentTypeSelection = async (collectionId: string) => {
+    if (!photo) {
+      Alert.alert('Error', 'No photo to upload');
+      return;
+    }
+  
+    setSelectedCollection(collectionId);
+    setIsModalVisible(false);
+  
     setUploading(true);
     try {
       // Convert photo to blob
       const response = await fetch(photo);
       const blob = await response.blob();
-
+  
       // Create File object for Appwrite
       const file = new File([blob], `photo-${Date.now()}.jpg`, {
         type: 'image/jpeg',
       });
-
+  
       // Upload to Appwrite Storage
       const storageResponse = await storage.createFile(
         selectedBucket,
         ID.unique(),
         file
       );
-
+  
       // Construct public URL
       const fileUrl = `${client.config.endpoint}/storage/buckets/${selectedBucket}/files/${storageResponse.$id}/view?project=${client.config.project}&mode=admin`;
-
+  
       // Save to Appwrite Database
       await databases.createDocument(
         selectedDatabase,
-        selectedCollection,
+        collectionId,
         ID.unique(),
         {
           imageUrl: fileUrl,
           timestamp: new Date().toISOString(),
         }
       );
-
+  
       Alert.alert('Success', 'Image uploaded successfully!');
       setPhoto(null);
     } catch (error) {
@@ -208,17 +241,6 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
       Alert.alert('Error', 'Failed to upload image');
     } finally {
       setUploading(false);
-    }
-  };
-
-  const handleShare = async () => {
-    if (photo) {
-      try {
-        await shareAsync(photo);
-      } catch (error) {
-        console.error('Sharing error:', error);
-        Alert.alert('Sharing failed');
-      }
     }
   };
 
@@ -268,7 +290,7 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
             <TouchableOpacity onPress={handleSave}>
               <Text style={styles.buttonText}>Save</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleShare}>
+            <TouchableOpacity onPress={handleSave}>
               <Text style={styles.buttonText}>Share</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleImageUpload} disabled={uploading}>
@@ -306,6 +328,41 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
           )}
         </View>
       )}
+
+      <Modal
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => setIsModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d73')} // Replace with your collection ID for Documents Received
+            >
+              <Text>Documents Received</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d74')} // Replace with your collection ID for Documents Issued
+            >
+              <Text>Documents Issued</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d75')} // Replace with your collection ID for Receipts
+            >
+              <Text>Receipts</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d76')} // Replace with your collection ID for Other Documents
+            >
+              <Text>Other Documents</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
