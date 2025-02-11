@@ -33,6 +33,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    justifyContent: 'center', // Center content vertically
+    alignItems: 'center', // Center content horizontally
   },
   logoContainer: {
     position: 'absolute',
@@ -51,8 +53,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginBottom: 20,
     gap: 20,
-    position: 'absolute',
-    bottom: 20,
     width: '100%',
     color: '#060663',
   },
@@ -62,9 +62,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cameraContainer: {
-    height: height * 0.5, // Reduce the height of the CameraView to 60% of the screen
-    width: width * 0.9,
-    marginTop: 200, // Add margin to push the CameraView down
+    height: height * 0.6, // Reduce the height of the CameraView to 60% of the screen
+    width: width * 0.9, // Adjust width to fit the screen better
+    justifyContent: 'center', // Center camera view vertically
+    alignItems: 'center', // Center camera view horizontally
   },
   captureButton: {
     width: 70,
