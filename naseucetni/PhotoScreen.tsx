@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cameraContainer: {
-    height: height * 0.5, // Reduced height to make space for text
+    height: height * 0.5,
     width: width * 1.5,
     justifyContent: 'center',
     alignItems: 'center',
@@ -77,15 +77,15 @@ const styles = StyleSheet.create({
     marginLeft: -50, // Adjusted to move the button more to the left
   },
   buttonText: {
-    color: '#060663', // All text buttons have this color
+    color: '#060663',
     fontSize: 16,
     padding: 10,
   },
   instructionText: {
-    fontSize: 14, // Reduced font size
-    color: '#060663', // Text color
+    fontSize: 14,
+    color: '#060663',
     textAlign: 'center',
-    marginTop: 5, // Reduced margin to bring text closer together
+    marginTop: 5,
   },
   modalContainer: {
     flex: 1,
@@ -252,6 +252,9 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
                 Upload
               </Text>
             </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Uctenky')}>
+              <Text style={styles.buttonText}>View Receipts</Text>
+            </TouchableOpacity>
           </View>
         </SafeAreaView>
       ) : (
@@ -286,7 +289,7 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
           <View style={styles.modalContent}>
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d73')} // Replace with your collection ID for Documents Received
+              onPress={() => handleDocumentTypeSelection('67ab9e15000feb8037b1')} // Replace with your collection ID for Documents Received
             >
               <Text style={{ color: '#060663' }}>Documents Received</Text>
             </TouchableOpacity>
@@ -298,7 +301,7 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d75')} // Replace with your collection ID for Receipts
+              onPress={() => handleDocumentTypeSelection('67ab9fba001a639fd162')} // Replace with your collection ID for Receipts
             >
               <Text style={{ color: '#060663' }}>Receipts</Text>
             </TouchableOpacity>

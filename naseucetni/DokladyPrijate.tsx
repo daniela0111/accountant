@@ -18,7 +18,7 @@ const DokladyPrijate = () => {
       try {
         const response = await databases.listDocuments(
           '67a48b26003ac5af5e62', // Replace with your database ID
-          '67a48b3e002354d58d73' // Replace with your collection ID for Documents Received
+          '67ab9e15000feb8037b1' // Replace with your collection ID for Documents Received
         );
         setDocuments(response.documents);
       } catch (error) {
