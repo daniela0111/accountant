@@ -33,78 +33,74 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   logoContainer: {
     position: 'absolute',
-    top: 40,
+    top: 50, // Adjusted to give more space for the larger logo
     alignItems: 'center',
-    width: '100%',
+    width: '100%', // Changed to 100% to center the logo properly
+    zIndex: 1,
   },
   logo: {
-    width: 300,
-    height: 50,
+    width: 350, // Increased width
+    height: 100, // Increased height
     resizeMode: 'contain',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginBottom: 20,
-    gap: 20,
-    position: 'absolute',
-    bottom: 20,
+    gap: 10,
     width: '100%',
+    alignItems: 'center',
   },
   preview: {
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
+  cameraContainer: {
+    height: height * 0.5, // Reduced height to make space for text
+    width: width * 0.9,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 100, // Moved lower to avoid overlapping with text
+  },
   captureButton: {
     width: 70,
     height: 70,
     borderRadius: 35,
     backgroundColor: '#f00',
-    marginBottom: 20,
+    marginBottom: -200, // Adjusted to position the button correctly
+    marginLeft: 100
   },
   buttonText: {
-    color: 'white',
+    color: '#060663', // All text buttons have this color
     fontSize: 16,
     padding: 10,
   },
+  galleryText: {
+    color: '#C00006', // Gallery link color
+    fontSize: 16,
+    padding: 10,
+   
+  },
   instructionText: {
-    fontSize: 18,
-    color: '#000',
+    fontSize: 14, // Reduced font size
+    color: '#060663', // Text color
     textAlign: 'center',
-    marginTop: 20,
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  overlayCutout: {
-    width: width * 0.9, // Increased width to 90% of the screen
-    height: height * 0.6, // Increased height to 60% of the screen
-    borderWidth: 2,
-    borderColor: '#fff',
-    backgroundColor: 'transparent',
-  },
-  overlayBackground: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    marginTop: 5, // Reduced margin to bring text closer together
   },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    top: 10,
+    left: 10,
+    right: 20,
+    bottom: 50,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
@@ -198,31 +194,31 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
       Alert.alert('Error', 'No photo to upload');
       return;
     }
-  
+
     setSelectedCollection(collectionId);
     setIsModalVisible(false);
-  
+
     setUploading(true);
     try {
       // Convert photo to blob
       const response = await fetch(photo);
       const blob = await response.blob();
-  
+
       // Create File object for Appwrite
       const file = new File([blob], `photo-${Date.now()}.jpg`, {
         type: 'image/jpeg',
       });
-  
+
       // Upload to Appwrite Storage
       const storageResponse = await storage.createFile(
         selectedBucket,
         ID.unique(),
         file
       );
-  
+
       // Construct public URL
       const fileUrl = `${client.config.endpoint}/storage/buckets/${selectedBucket}/files/${storageResponse.$id}/view?project=${client.config.project}&mode=admin`;
-  
+
       // Save to Appwrite Database
       await databases.createDocument(
         selectedDatabase,
@@ -233,7 +229,7 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
           timestamp: new Date().toISOString(),
         }
       );
-  
+
       Alert.alert('Success', 'Image uploaded successfully!');
       setPhoto(null);
     } catch (error) {
@@ -261,18 +257,17 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
       {/* Logo at the top */}
       <View style={styles.logoContainer}>
         <Image
-          source={require('./assets/logo.png')} // Replace with the path to your logo image
+          source={require('./assets/logo.png')} 
           style={styles.logo}
         />
-        <Text style={styles.instructionText}>Accounting documents</Text>
         <Text style={styles.instructionText}>Please take a picture of the whole document</Text>
         <Text style={styles.instructionText}>Check if the document is in focus</Text>
       </View>
 
       {uploading && (
         <View style={StyleSheet.absoluteFill}>
-          <ActivityIndicator size="large" color="#0000ff" />
-          <Text>Uploading...</Text>
+          <ActivityIndicator size="large" color="#060663" />
+          <Text style={{ color: '#060663' }}>Uploading...</Text>
         </View>
       )}
 
@@ -303,26 +298,23 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
       ) : (
         <View style={styles.container}>
           {cameraPermission?.granted ? (
-            <CameraView
-              style={styles.preview}
-              facing="back" // Use 'facing' for CameraView
-              ref={cameraRef}
-            >
-              {/* Grey rectangle overlay */}
-              <View style={styles.overlay}>
-                <View style={styles.overlayBackground} />
-                <View style={styles.overlayCutout} />
-              </View>
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  style={styles.captureButton}
-                  onPress={handleTakePicture}
-                />
-                <TouchableOpacity onPress={handleChooseFromLibrary}>
-                  <Text style={styles.buttonText}>Gallery</Text>
-                </TouchableOpacity>
-              </View>
-            </CameraView>
+            <View style={styles.cameraContainer}>
+              <CameraView
+                style={styles.preview}
+                facing="back" // Use 'facing' for CameraView
+                ref={cameraRef}
+              >
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={styles.captureButton}
+                    onPress={handleTakePicture}
+                  />
+                  <TouchableOpacity onPress={handleChooseFromLibrary}>
+                    <Text style={styles.galleryText}>Gallery</Text>
+                  </TouchableOpacity>
+                </View>
+              </CameraView>
+            </View>
           ) : (
             <Text style={styles.buttonText}>Camera permission required</Text>
           )}
@@ -340,25 +332,25 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
               style={styles.modalButton}
               onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d73')} // Replace with your collection ID for Documents Received
             >
-              <Text>Documents Received</Text>
+              <Text style={{ color: '#060663' }}>Documents Received</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalButton}
               onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d74')} // Replace with your collection ID for Documents Issued
             >
-              <Text>Documents Issued</Text>
+              <Text style={{ color: '#060663' }}>Documents Issued</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalButton}
               onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d75')} // Replace with your collection ID for Receipts
             >
-              <Text>Receipts</Text>
+              <Text style={{ color: '#060663' }}>Receipts</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalButton}
               onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d76')} // Replace with your collection ID for Other Documents
             >
-              <Text>Other Documents</Text>
+              <Text style={{ color: '#060663' }}>Other Documents</Text>
             </TouchableOpacity>
           </View>
         </View>
