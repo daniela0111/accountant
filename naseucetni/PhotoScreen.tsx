@@ -33,19 +33,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    justifyContent: 'center', // Center content vertically
-    alignItems: 'center', // Center content horizontally
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   logoContainer: {
     position: 'absolute',
-    top: 40,
+    top: 50, // Adjusted to give more space for the larger logo
     alignItems: 'center',
-    width: '100%',
-    zIndex: 1, // Ensure the logo is above the CameraView
+    width: '100%', // Changed to 100% to center the logo properly
+    zIndex: 1,
   },
   logo: {
-    width: 300,
-    height: 50,
+    width: 350, // Increased width
+    height: 100, // Increased height
     resizeMode: 'contain',
   },
   buttonContainer: {
@@ -54,7 +54,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     gap: 20,
     width: '100%',
-    color: '#060663',
   },
   preview: {
     flex: 1,
@@ -62,28 +61,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cameraContainer: {
-    height: height * 0.6, // Reduce the height of the CameraView to 60% of the screen
-    width: width * 0.9, // Adjust width to fit the screen better
-    justifyContent: 'center', // Center camera view vertically
-    alignItems: 'center', // Center camera view horizontally
+    height: height * 0.6,
+    width: width * 0.9,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   captureButton: {
     width: 70,
     height: 70,
     borderRadius: 35,
     backgroundColor: '#f00',
-    marginBottom: 20,
+    marginBottom: -200, // Moved lower
+    color: '#C00006'
   },
   buttonText: {
-    color: 'white',
+    color: '#060663', // All text buttons have this color
     fontSize: 16,
     padding: 10,
+    marginTop: 500,
+  },
+  galleryText: {
+    color: '#C00006', // Gallery link color
+    fontSize: 16,
+    padding: 10,
+    marginBottom: -500,
   },
   instructionText: {
-    fontSize: 18,
-    color: '#000',
+    fontSize: 14, // Reduced font size
+    color: '#060663', // Text color
     textAlign: 'center',
-    marginTop: 20,
+    marginTop: 5, // Reduced margin to bring text closer together
   },
   modalContainer: {
     flex: 1,
@@ -252,15 +259,14 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
           source={require('./assets/logo.png')} 
           style={styles.logo}
         />
-        <Text style={styles.instructionText}>Accounting documents</Text>
         <Text style={styles.instructionText}>Please take a picture of the whole document</Text>
         <Text style={styles.instructionText}>Check if the document is in focus</Text>
       </View>
 
       {uploading && (
         <View style={StyleSheet.absoluteFill}>
-          <ActivityIndicator size="large" color="#0000ff" />
-          <Text>Uploading...</Text>
+          <ActivityIndicator size="large" color="#060663" />
+          <Text style={{ color: '#060663' }}>Uploading...</Text>
         </View>
       )}
 
@@ -303,7 +309,7 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
                     onPress={handleTakePicture}
                   />
                   <TouchableOpacity onPress={handleChooseFromLibrary}>
-                    <Text style={styles.buttonText}>Gallery</Text>
+                    <Text style={styles.galleryText}>Gallery</Text>
                   </TouchableOpacity>
                 </View>
               </CameraView>
@@ -325,25 +331,25 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
               style={styles.modalButton}
               onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d73')} // Replace with your collection ID for Documents Received
             >
-              <Text>Documents Received</Text>
+              <Text style={{ color: '#060663' }}>Documents Received</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalButton}
               onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d74')} // Replace with your collection ID for Documents Issued
             >
-              <Text>Documents Issued</Text>
+              <Text style={{ color: '#060663' }}>Documents Issued</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalButton}
               onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d75')} // Replace with your collection ID for Receipts
             >
-              <Text>Receipts</Text>
+              <Text style={{ color: '#060663' }}>Receipts</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalButton}
               onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d76')} // Replace with your collection ID for Other Documents
             >
-              <Text>Other Documents</Text>
+              <Text style={{ color: '#060663' }}>Other Documents</Text>
             </TouchableOpacity>
           </View>
         </View>
