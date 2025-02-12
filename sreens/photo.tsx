@@ -12,9 +12,7 @@ import {
   Modal,
 } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { shareAsync } from 'expo-sharing';
 import * as MediaLibrary from 'expo-media-library';
-import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
 import { ID, Client, Storage, Databases } from 'appwrite';
 
 // Appwrite Configuration
@@ -25,7 +23,9 @@ const client = new Client()
 const storage = new Storage(client);
 const databases = new Databases(client);
 
-interface PhotoScreenProps {}
+interface PhotoScreenProps {
+  navigation: any; // Navigation prop for navigating to other screens
+}
 
 const { width, height } = Dimensions.get('window');
 
@@ -38,14 +38,14 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     position: 'absolute',
-    top: 50, // Adjusted to give more space for the larger logo
+    top: 50,
     alignItems: 'center',
-    width: '100%', // Changed to 100% to center the logo properly
+    width: '100%',
     zIndex: 1,
   },
   logo: {
-    width: 350, // Increased width
-    height: 100, // Increased height
+    width: 350,
+    height: 100,
     resizeMode: 'contain',
   },
   buttonContainer: {
@@ -62,8 +62,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cameraContainer: {
-    height: height * 0.5, // Reduced height to make space for text
-    width: width * 0.9,
+    height: height * 0.5,
+    width: width * 1.5,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 100, // Moved lower to avoid overlapping with text
@@ -73,25 +73,19 @@ const styles = StyleSheet.create({
     height: 70,
     borderRadius: 35,
     backgroundColor: '#f00',
-    marginBottom: -200, // Adjusted to position the button correctly
-    marginLeft: 100
+    marginBottom: -150, // Adjusted to position the button vertically
+    marginLeft: -50, // Adjusted to move the button more to the left
   },
   buttonText: {
-    color: '#060663', // All text buttons have this color
+    color: '#060663',
     fontSize: 16,
     padding: 10,
-  },
-  galleryText: {
-    color: '#C00006', // Gallery link color
-    fontSize: 16,
-    padding: 10,
-   
   },
   instructionText: {
-    fontSize: 14, // Reduced font size
-    color: '#060663', // Text color
+    fontSize: 14,
+    color: '#060663',
     textAlign: 'center',
-    marginTop: 5, // Reduced margin to bring text closer together
+    marginTop: 5,
   },
   modalContainer: {
     flex: 1,
@@ -118,11 +112,12 @@ const styles = StyleSheet.create({
   },
 });
 
-const PhotoScreen: React.FC<PhotoScreenProps> = () => {
+const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState<boolean | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [isCameraReady, setIsCameraReady] = useState(false); // Add camera ready state
   const [selectedBucket] = useState<string>('67a48afb0025416339a1'); // Replace with your bucket ID
   const [selectedDatabase] = useState<string>('67a48b26003ac5af5e62'); // Replace with your database ID
   const [selectedCollection, setSelectedCollection] = useState<string>('67a48b3e002354d58d73'); // Replace with your collection ID
@@ -150,36 +145,26 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
   }, [cameraPermission]);
 
   const handleTakePicture = async () => {
-    if (cameraPermission?.granted && cameraRef.current) {
-      try {
-        const data = await cameraRef.current.takePictureAsync({
-          quality: 0.8,
-          base64: true,
-          exif: true,
-        });
-        setPhoto(data.uri);
-      } catch (error) {
-        console.error('Error taking picture:', error);
-        Alert.alert('Error capturing photo');
-      }
+    if (!cameraPermission?.granted) {
+      Alert.alert('Error', 'Camera permission is required');
+      return;
     }
-  };
 
-  const handleChooseFromLibrary = async () => {
+    if (!cameraRef.current) {
+      Alert.alert('Error', 'Camera is not ready');
+      return;
+    }
+
     try {
-      const result = await launchImageLibraryAsync({
-        mediaTypes: MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.8,
+      const data = await cameraRef.current.takePictureAsync({
+        quality: 0.05, // Further reduce quality to minimize file size
+        base64: true,
+        exif: true,
       });
-
-      if (!result.canceled && result.assets) {
-        setPhoto(result.assets[0].uri);
-      }
+      setPhoto(data.uri);
     } catch (error) {
-      console.error('Gallery error:', error);
-      Alert.alert('Error accessing gallery');
+      console.error('Error taking picture:', error);
+      Alert.alert('Error capturing photo');
     }
   };
 
@@ -200,26 +185,30 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
 
     setUploading(true);
     try {
-      // Convert photo to blob
+      console.log('Converting photo to blob...');
       const response = await fetch(photo);
       const blob = await response.blob();
+      console.log('Blob created:', blob);
 
-      // Create File object for Appwrite
+      console.log('Creating File object...');
       const file = new File([blob], `photo-${Date.now()}.jpg`, {
         type: 'image/jpeg',
       });
+      console.log('File object created:', file);
 
-      // Upload to Appwrite Storage
+      console.log('Uploading to Appwrite Storage...');
       const storageResponse = await storage.createFile(
         selectedBucket,
         ID.unique(),
         file
       );
+      console.log('File uploaded:', storageResponse);
 
-      // Construct public URL
+      console.log('Constructing public URL...');
       const fileUrl = `${client.config.endpoint}/storage/buckets/${selectedBucket}/files/${storageResponse.$id}/view?project=${client.config.project}&mode=admin`;
+      console.log('Public URL:', fileUrl);
 
-      // Save to Appwrite Database
+      console.log('Saving to Appwrite Database...');
       await databases.createDocument(
         selectedDatabase,
         collectionId,
@@ -229,9 +218,11 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
           timestamp: new Date().toISOString(),
         }
       );
+      console.log('Document saved to database.');
 
       Alert.alert('Success', 'Image uploaded successfully!');
-      setPhoto(null);
+      setPhoto(null); // Reset photo state
+      setUploading(false); // Stop uploading indicator
     } catch (error) {
       console.error('Upload error:', error);
       Alert.alert('Error', 'Failed to upload image');
@@ -240,24 +231,12 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
     }
   };
 
-  const handleSave = async () => {
-    if (photo && hasMediaLibraryPermission) {
-      try {
-        await MediaLibrary.saveToLibraryAsync(photo);
-        Alert.alert('Photo saved to library!');
-      } catch (error) {
-        console.error('Save error:', error);
-        Alert.alert('Error saving photo');
-      }
-    }
-  };
-
   return (
     <View style={styles.container}>
       {/* Logo at the top */}
       <View style={styles.logoContainer}>
         <Image
-          source={require('./assets/logo.png')} 
+          source={require('./assets/logo.png')}
           style={styles.logo}
         />
         <Text style={styles.instructionText}>Please take a picture of the whole document</Text>
@@ -282,16 +261,13 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
             <TouchableOpacity onPress={() => setPhoto(null)}>
               <Text style={styles.buttonText}>Retake</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleSave}>
-              <Text style={styles.buttonText}>Save</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleSave}>
-              <Text style={styles.buttonText}>Share</Text>
-            </TouchableOpacity>
             <TouchableOpacity onPress={handleImageUpload} disabled={uploading}>
               <Text style={[styles.buttonText, uploading && { opacity: 0.5 }]}>
                 Upload
               </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Uctenky')}>
+              <Text style={styles.buttonText}>View Receipts</Text>
             </TouchableOpacity>
           </View>
         </SafeAreaView>
@@ -303,15 +279,14 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
                 style={styles.preview}
                 facing="back" // Use 'facing' for CameraView
                 ref={cameraRef}
+                onCameraReady={() => setIsCameraReady(true)} // Set camera ready state
               >
                 <View style={styles.buttonContainer}>
                   <TouchableOpacity
                     style={styles.captureButton}
                     onPress={handleTakePicture}
+                    disabled={!isCameraReady} // Disable button until camera is ready
                   />
-                  <TouchableOpacity onPress={handleChooseFromLibrary}>
-                    <Text style={styles.galleryText}>Gallery</Text>
-                  </TouchableOpacity>
                 </View>
               </CameraView>
             </View>
@@ -330,7 +305,7 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
           <View style={styles.modalContent}>
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d73')} // Replace with your collection ID for Documents Received
+              onPress={() => handleDocumentTypeSelection('67ab9e15000feb8037b1')} // Replace with your collection ID for Documents Received
             >
               <Text style={{ color: '#060663' }}>Documents Received</Text>
             </TouchableOpacity>
@@ -342,7 +317,7 @@ const PhotoScreen: React.FC<PhotoScreenProps> = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d75')} // Replace with your collection ID for Receipts
+              onPress={() => handleDocumentTypeSelection('67ab9fba001a639fd162')} // Replace with your collection ID for Receipts
             >
               <Text style={{ color: '#060663' }}>Receipts</Text>
             </TouchableOpacity>

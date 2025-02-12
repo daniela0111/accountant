@@ -1,8 +1,10 @@
-import { Client, Account, ID, Storage, Databases } from 'react-native-appwrite';
+import { Client, Storage, Databases, ID } from 'appwrite';
 
 const client = new Client()
-    .setProject('67a39d4d001c684cead2')
-    .setPlatform('naseucetni.accountant');
+  .setEndpoint('https://cloud.appwrite.io/v1') // Replace with your Appwrite endpoint
+  .setProject('67a39d4d001c684cead2'); // Replace with your project ID
 
-    export const storage = new Storage(client);
-    export const databases = new Databases(client);
+const storage = new Storage(client);
+const databases = new Databases(client);
+
+export { client, storage, databases, ID };

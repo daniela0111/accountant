@@ -117,6 +117,7 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
   const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState<boolean | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [isCameraReady, setIsCameraReady] = useState(false); // Add camera ready state
   const [selectedBucket] = useState<string>('67a48afb0025416339a1'); // Replace with your bucket ID
   const [selectedDatabase] = useState<string>('67a48b26003ac5af5e62'); // Replace with your database ID
   const [selectedCollection, setSelectedCollection] = useState<string>('67a48b3e002354d58d73'); // Replace with your collection ID
@@ -144,18 +145,26 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
   }, [cameraPermission]);
 
   const handleTakePicture = async () => {
-    if (cameraPermission?.granted && cameraRef.current) {
-      try {
-        const data = await cameraRef.current.takePictureAsync({
-          quality: 0.8,
-          base64: true,
-          exif: true,
-        });
-        setPhoto(data.uri);
-      } catch (error) {
-        console.error('Error taking picture:', error);
-        Alert.alert('Error capturing photo');
-      }
+    if (!cameraPermission?.granted) {
+      Alert.alert('Error', 'Camera permission is required');
+      return;
+    }
+
+    if (!cameraRef.current) {
+      Alert.alert('Error', 'Camera is not ready');
+      return;
+    }
+
+    try {
+      const data = await cameraRef.current.takePictureAsync({
+        quality: 0.05, // Further reduce quality to minimize file size
+        base64: true,
+        exif: true,
+      });
+      setPhoto(data.uri);
+    } catch (error) {
+      console.error('Error taking picture:', error);
+      Alert.alert('Error capturing photo');
     }
   };
 
@@ -176,26 +185,41 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
 
     setUploading(true);
     try {
-      // Convert photo to blob
+      console.log('Converting photo to blob...');
       const response = await fetch(photo);
       const blob = await response.blob();
+      console.log('Blob created:', blob);
 
-      // Create File object for Appwrite
-      const file = new File([blob], `photo-${Date.now()}.jpg`, {
-        type: 'image/jpeg',
-      });
+      // Use FormData to upload the file
+      const formData = new FormData();
+      formData.append('file', blob, `photo-${Date.now()}.jpg`);
 
-      // Upload to Appwrite Storage
-      const storageResponse = await storage.createFile(
-        selectedBucket,
-        ID.unique(),
-        file
+      console.log('Uploading to Appwrite Storage...');
+      const fileId = ID.unique();
+      const uploadResponse = await fetch(
+        `${client.config.endpoint}/storage/buckets/${selectedBucket}/files`,
+        {
+          method: 'POST',
+          headers: {
+            'X-Appwrite-Project': client.config.project,
+            'Content-Type': 'multipart/form-data',
+          },
+          body: formData,
+        }
       );
 
-      // Construct public URL
-      const fileUrl = `${client.config.endpoint}/storage/buckets/${selectedBucket}/files/${storageResponse.$id}/view?project=${client.config.project}&mode=admin`;
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to upload file');
+      }
 
-      // Save to Appwrite Database
+      const storageResponse = await uploadResponse.json();
+      console.log('File uploaded:', storageResponse);
+
+      console.log('Constructing public URL...');
+      const fileUrl = `${client.config.endpoint}/storage/buckets/${selectedBucket}/files/${storageResponse.$id}/view?project=${client.config.project}&mode=admin`;
+      console.log('Public URL:', fileUrl);
+
+      console.log('Saving to Appwrite Database...');
       await databases.createDocument(
         selectedDatabase,
         collectionId,
@@ -205,6 +229,7 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
           timestamp: new Date().toISOString(),
         }
       );
+      console.log('Document saved to database.');
 
       Alert.alert('Success', 'Image uploaded successfully!');
       setPhoto(null); // Reset photo state
@@ -265,11 +290,13 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
                 style={styles.preview}
                 facing="back" // Use 'facing' for CameraView
                 ref={cameraRef}
+                onCameraReady={() => setIsCameraReady(true)} // Set camera ready state
               >
                 <View style={styles.buttonContainer}>
                   <TouchableOpacity
                     style={styles.captureButton}
                     onPress={handleTakePicture}
+                    disabled={!isCameraReady} // Disable button until camera is ready
                   />
                 </View>
               </CameraView>
