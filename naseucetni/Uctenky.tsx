@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, Alert, Image } from 'react-native';
 import { ID, Client, Databases } from 'appwrite';
 
 // Appwrite Configuration
@@ -43,6 +43,11 @@ const Uctenky = () => {
 
   return (
     <View style={styles.container}>
+      {/* Logo at the top */}
+      <Image
+        source={require('./assets/logo.png')} // Replace with the path to your logo image
+        style={styles.logo}
+      />
       <Text style={styles.title}>Uploaded Receipts</Text>
       <FlatList
         data={receipts}
@@ -68,6 +73,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  logo: {
+    width: 350, // Adjust the width as needed
+    height: 100, // Adjust the height as needed
+    resizeMode: 'contain',
+    alignSelf: 'center',
+    marginBottom: 20,
   },
   title: {
     fontSize: 24,

@@ -91,10 +91,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    top: 10,
-    left: 10,
-    right: 20,
-    bottom: 50,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
@@ -102,13 +98,19 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
     borderRadius: 10,
+    elevation: 5, 
   },
   modalButton: {
     padding: 15,
     marginVertical: 5,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#060663',
     borderRadius: 5,
     alignItems: 'center',
+    borderWidth: 1,
+  },
+  modalButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 
