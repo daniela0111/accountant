@@ -91,10 +91,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    top: 10,
-    left: 10,
-    right: 20,
-    bottom: 50,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
@@ -102,13 +98,19 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
     borderRadius: 10,
+    elevation: 5, 
   },
   modalButton: {
     padding: 15,
     marginVertical: 5,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#060663',
     borderRadius: 5,
     alignItems: 'center',
+    borderWidth: 1,
+  },
+  modalButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 
@@ -190,18 +192,29 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
       const blob = await response.blob();
       console.log('Blob created:', blob);
 
-      console.log('Creating File object...');
-      const file = new File([blob], `photo-${Date.now()}.jpg`, {
-        type: 'image/jpeg',
-      });
-      console.log('File object created:', file);
+      // Use FormData to upload the file
+      const formData = new FormData();
+      formData.append('file', blob, `photo-${Date.now()}.jpg`);
 
       console.log('Uploading to Appwrite Storage...');
-      const storageResponse = await storage.createFile(
-        selectedBucket,
-        ID.unique(),
-        file
+      const fileId = ID.unique();
+      const uploadResponse = await fetch(
+        `${client.config.endpoint}/storage/buckets/${selectedBucket}/files`,
+        {
+          method: 'POST',
+          headers: {
+            'X-Appwrite-Project': client.config.project,
+            'Content-Type': 'multipart/form-data',
+          },
+          body: formData,
+        }
       );
+
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to upload file');
+      }
+
+      const storageResponse = await uploadResponse.json();
       console.log('File uploaded:', storageResponse);
 
       console.log('Constructing public URL...');
@@ -335,4 +348,3 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
 };
 
 export default PhotoScreen;
-
