@@ -17,7 +17,7 @@ const LoginPage: React.FC = () => {
     setError('');
 
     try {
-      const response = await account.createEmailSession(email, password);
+      const response = await account.createEmailPasswordSession(email, password);
       console.log('Login successful:', response);
       // Redirect or update state upon successful login
     } catch (err) {
@@ -31,9 +31,9 @@ const LoginPage: React.FC = () => {
       <h1>Login</h1>
       <form onSubmit={handleLogin}>
         <div>
-          <label>Name and surname:</label>
+          <label>Email:</label>
           <input
-            type="text"
+            type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
