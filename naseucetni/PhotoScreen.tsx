@@ -14,7 +14,7 @@ import {
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { ID, Client, Storage, Databases } from 'appwrite';
-import * as ImageManipulator from 'expo-image-manipulator'; // Import for resizing images
+import * as ImageManipulator from 'expo-image-manipulator'; 
 
 // Appwrite Configuration
 const client = new Client()
@@ -160,7 +160,7 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
 
     try {
       const data = await cameraRef.current.takePictureAsync({
-        quality: 0.01, // Further reduce quality to minimize file size
+        quality: 0.01,
         base64: true,
         exif: true,
       });
