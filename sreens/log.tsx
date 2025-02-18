@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet, 
-  Image, 
-  Alert 
-} from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { Client, Account } from 'appwrite';
 
 interface LoginPageProps {
@@ -78,12 +70,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsLoggedIn }) => {
 
   return (
     <View style={styles.container}>
-      {/* Logo */}
-      <Image
-        source={require('./assets/logo.png')} // Ensure the path to your logo is correct
-        style={styles.logo}
-      />
-      <Text style={styles.title}>Accounting Documents</Text>
+      <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -91,7 +78,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsLoggedIn }) => {
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
-        placeholderTextColor="#060663"
       />
       <TextInput
         style={styles.input}
@@ -99,13 +85,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsLoggedIn }) => {
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        placeholderTextColor="#060663"
       />
       {error && <Text style={styles.error}>{error}</Text>}
-      {/* Custom Log In Button */}
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.loginButtonText}>Log In</Text>
-      </TouchableOpacity>
+      <Button title="Log In" onPress={handleLogin} />
     </View>
   );
 };
@@ -113,52 +95,26 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsLoggedIn }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start', // Position elements closer to the top
-    backgroundColor: '#f5f5f5', // Light background color
-    padding: 24,
-  },
-  logo: {
-    width: 350, // Adjust the width of the logo
-    height: 190, // Adjust the height of the logo
-    alignSelf: 'center', // Center the logo horizontally
-    marginBottom: 16, // Add spacing below the logo
-    resizeMode: 'contain', // Ensure the logo scales properly
+    justifyContent: 'center',
+    padding: 16,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 32,
+    marginBottom: 16,
     textAlign: 'center',
-    color: '#060663',
   },
   input: {
-    height: 50,
-    borderColor: '#060663',
+    height: 40,
+    borderColor: 'gray',
     borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 16,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    color: '#333',
-    backgroundColor: '#fff', // White input background
+    marginBottom: 12,
+    paddingHorizontal: 8,
   },
   error: {
-    color: '#C00006', 
-    marginBottom: 16,
+    color: 'red',
+    marginBottom: 12,
     textAlign: 'center',
-    fontSize: 14,
-  },
-  loginButton: {
-    backgroundColor: '#060663', // Dark blue background
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loginButtonText: {
-    color: '#fff', // White text
-    fontSize: 18,
-    fontWeight: 'bold',
   },
 });
 
