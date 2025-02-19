@@ -15,7 +15,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { ID, Client, Storage, Databases } from 'appwrite';
 import * as ImageManipulator from 'expo-image-manipulator'; 
-import { styles } from './PhotoScreenStyles';
+import { styles } from './styles/PhotoScreenStyles';
 
 // Appwrite Configuration
 const client = new Client()

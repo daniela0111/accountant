@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, Alert, Image } from 'react-native';
 import { ID, Client, Databases } from 'appwrite';
-import { styles } from './UctenkyStyles'; // Import styles from the separate file
+import { styles } from './styles/UctenkyStyles'; // Import styles from the separate file
 
 // Appwrite Configuration
 const client = new Client()
