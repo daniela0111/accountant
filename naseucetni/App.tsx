@@ -86,7 +86,7 @@ const MainApp = () => {
         component={DokladyStack}
         options={{
           headerShown: false,
-          tabBarLabel: 'Domů', // Label for the "Doklady" tab
+          tabBarLabel: 'Home', // Label for the "Doklady" tab
         }}
       />
       <Tab.Screen
@@ -94,7 +94,7 @@ const MainApp = () => {
         component={PhotoScreen}
         options={{
           headerShown: false,
-          tabBarLabel: 'Snímkování', // Label for the "Scanner" tab
+          tabBarLabel: 'Scanner', // Label for the "Scanner" tab
         }}
       />
       <Tab.Screen
@@ -102,7 +102,7 @@ const MainApp = () => {
         component={SettingsScreen}
         options={{
           headerShown: false,
-          tabBarLabel: 'Nápověda', // Label for the "Nápověda" tab
+          tabBarLabel: 'Help', // Label for the "Nápověda" tab
         }}
       />
     </Tab.Navigator>
