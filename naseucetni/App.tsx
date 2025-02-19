@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, RouteProp } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack';
@@ -29,8 +29,8 @@ type RootStackParamList = {
   Login: undefined;
 };
 
-const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator(); // No type arguments needed
+const Stack = createStackNavigator(); // No type arguments needed
 
 // Main App Stack (Tabs)
 const DokladyStack = () => {
@@ -48,42 +48,63 @@ const DokladyStack = () => {
 const MainApp = () => {
   return (
     <Tab.Navigator
-      screenOptions={({ route }: { route: keyof TabParamList }) => ({
+      screenOptions={({ route }: { route: RouteProp<TabParamList, keyof TabParamList> }) => ({
         tabBarStyle: {
           backgroundColor: '#060663', // Tab bar background color
           height: 80,
         },
-        tabBarIcon: ({ color }: { color: string }) => {
-          let iconName: string;
+        tabBarIcon: ({ color, size }: { color: string; size: number }) => {
+          let iconName: keyof typeof MaterialCommunityIcons.glyphMap;
 
           // Icon name based on the route
-          switch (route) {
+          switch (route.name) {
             case 'Doklady':
-              iconName = 'home';
+              iconName = 'home'; // Home icon
               break;
             case 'Scanner':
-              iconName = 'plus';
+              iconName = 'plus'; // Add icon
               break;
             case 'Nápověda':
-              iconName = 'help';
+              iconName = 'help-circle'; // Help circle icon
               break;
             default:
-              iconName = 'alert-circle';
+              iconName = 'alert-circle'; // Default alert circle icon
           }
 
           return (
             <MaterialCommunityIcons
-              name={iconName as keyof typeof MaterialCommunityIcons.glyphMap}
+              name={iconName}
               color={color} // Button icon color
-              size={30}
+              size={size}
             />
           );
         },
       })}
     >
-      <Tab.Screen name="Doklady" component={DokladyStack} options={{ headerShown: false }} />
-      <Tab.Screen name="Scanner" component={PhotoScreen} options={{ headerShown: false }} />
-      <Tab.Screen name="Nápověda" component={SettingsScreen} options={{ headerShown: false }} />
+      <Tab.Screen
+        name="Doklady"
+        component={DokladyStack}
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Domů', // Label for the "Doklady" tab
+        }}
+      />
+      <Tab.Screen
+        name="Scanner"
+        component={PhotoScreen}
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Snímkování', // Label for the "Scanner" tab
+        }}
+      />
+      <Tab.Screen
+        name="Nápověda"
+        component={SettingsScreen}
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Nápověda', // Label for the "Nápověda" tab
+        }}
+      />
     </Tab.Navigator>
   );
 };

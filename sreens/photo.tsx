@@ -14,6 +14,7 @@ import {
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { ID, Client, Storage, Databases } from 'appwrite';
+import * as ImageManipulator from 'expo-image-manipulator'; 
 
 // Appwrite Configuration
 const client = new Client()
@@ -159,11 +160,19 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
 
     try {
       const data = await cameraRef.current.takePictureAsync({
-        quality: 0.05, // Further reduce quality to minimize file size
+        quality: 0.01,
         base64: true,
         exif: true,
       });
-      setPhoto(data.uri);
+
+      // Resize the image to avoid memory issues
+      const resizedImage = await ImageManipulator.manipulateAsync(
+        data.uri,
+        [{ resize: { width: 800 } }], // Resize to a smaller width
+        { compress: 0.05, format: ImageManipulator.SaveFormat.JPEG }
+      );
+
+      setPhoto(resizedImage.uri);
     } catch (error) {
       console.error('Error taking picture:', error);
       Alert.alert('Error capturing photo');
@@ -211,6 +220,7 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
       );
 
       if (!uploadResponse.ok) {
+        console.error('Upload failed:', await uploadResponse.text());
         throw new Error('Failed to upload file');
       }
 
@@ -234,8 +244,10 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
       console.log('Document saved to database.');
 
       Alert.alert('Success', 'Image uploaded successfully!');
-      setPhoto(null); // Reset photo state
-      setUploading(false); // Stop uploading indicator
+      
+      // Reset the photo state and return to the camera view
+      setPhoto(null);
+      setUploading(false);
     } catch (error) {
       console.error('Upload error:', error);
       Alert.alert('Error', 'Failed to upload image');
@@ -320,25 +332,25 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
               style={styles.modalButton}
               onPress={() => handleDocumentTypeSelection('67ab9e15000feb8037b1')} // Replace with your collection ID for Documents Received
             >
-              <Text style={{ color: '#060663' }}>Documents Received</Text>
+              <Text style={styles.modalButtonText}>Documents Received</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalButton}
               onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d74')} // Replace with your collection ID for Documents Issued
             >
-              <Text style={{ color: '#060663' }}>Documents Issued</Text>
+              <Text style={styles.modalButtonText}>Documents Issued</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalButton}
               onPress={() => handleDocumentTypeSelection('67ab9fba001a639fd162')} // Replace with your collection ID for Receipts
             >
-              <Text style={{ color: '#060663' }}>Receipts</Text>
+              <Text style={styles.modalButtonText}>Receipts</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalButton}
               onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d76')} // Replace with your collection ID for Other Documents
             >
-              <Text style={{ color: '#060663' }}>Other Documents</Text>
+              <Text style={styles.modalButtonText}>Other Documents</Text>
             </TouchableOpacity>
           </View>
         </View>
