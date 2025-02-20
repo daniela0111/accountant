@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
   Dimensions,
   Modal,
-  StyleSheet, // Import StyleSheet
+  StyleSheet, 
 } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
@@ -19,8 +19,8 @@ import { styles } from './styles/PhotoScreenStyles';
 
 // Appwrite Configuration
 const client = new Client()
-  .setEndpoint('https://cloud.appwrite.io/v1') // Replace with your Appwrite endpoint
-  .setProject('67a39d4d001c684cead2'); // Replace with your project ID
+  .setEndpoint('https://cloud.appwrite.io/v1') 
+  .setProject('67a39d4d001c684cead2'); 
 
 const storage = new Storage(client);
 const databases = new Databases(client);

@@ -1,8 +1,7 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { styles } from './styles/HomePageStyles'; 
 
 // Define the type for the navigation stack
 type RootStackParamList = {
@@ -61,5 +60,33 @@ const HomePage = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center', 
+  },
+  logo: {
+    width: '100%',
+    resizeMode: 'contain',
+    marginTop: 20,
+  },
+  buttonsContainer: {
+    marginTop: 20,
+    flexDirection: 'column', 
+  },
+  row: {
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    width: '80%', 
+  },
+  buttonText: {
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+});
 
 export default HomePage;
