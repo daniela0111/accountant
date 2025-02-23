@@ -9,18 +9,20 @@ import {
   ActivityIndicator,
   Dimensions,
   Modal,
-  StyleSheet, 
+  StyleSheet,
 } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { ID, Client, Storage, Databases } from 'appwrite';
-import * as ImageManipulator from 'expo-image-manipulator'; 
+import * as ImageManipulator from 'expo-image-manipulator';
 import { styles } from './styles/PhotoScreenStyles';
+import { cloudyUpl } from './cloudinary';
+import { odeslatCN } from './odeslatCN';
 
 // Appwrite Configuration
 const client = new Client()
-  .setEndpoint('https://cloud.appwrite.io/v1') 
-  .setProject('67a39d4d001c684cead2'); 
+  .setEndpoint('https://cloud.appwrite.io/v1')
+  .setProject('67a39d4d001c684cead2');
 
 const storage = new Storage(client);
 const databases = new Databases(client);
@@ -78,15 +80,15 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
         base64: true,
         exif: true,
       });
-
+      console.log(">data", data)
+      await odeslatCN(data?.base64)
       // Resize the image to avoid memory issues
       const resizedImage = await ImageManipulator.manipulateAsync(
         data.uri,
-        [{ resize: { width: 800 } }], 
+        [{ resize: { width: 800 } }],
         { compress: 0.05, format: ImageManipulator.SaveFormat.JPEG }
       );
 
-      setPhoto(resizedImage.uri);
     } catch (error) {
       console.error('Error taking picture:', error);
       Alert.alert('Error capturing photo');
@@ -104,61 +106,72 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
       Alert.alert('Error', 'No photo to upload');
       return;
     }
+    setPhoto(photo);
 
     setSelectedCollection(collectionId);
     setIsModalVisible(false);
 
     setUploading(true);
+    
     try {
-      console.log('Converting photo to blob...');
-      const response = await fetch(photo);
-      const blob = await response.blob();
-      console.log('Blob created:', blob);
-
-      // Use FormData to upload the file
-      const formData = new FormData();
-      formData.append('file', blob, `photo-${Date.now()}.jpg`);
-
-      console.log('Uploading to Appwrite Storage...');
-      const fileId = ID.unique();
-      const uploadResponse = await fetch(
-        `${client.config.endpoint}/storage/buckets/${selectedBucket}/files`,
-        {
-          method: 'POST',
-          headers: {
-            'X-Appwrite-Project': client.config.project,
-            'Content-Type': 'multipart/form-data',
-          },
-          body: formData,
-        }
+      /*   console.log('Converting photo to blob...');
+        const response = await fetch(photo);
+        const blob = await response.blob();
+        console.log('Blob created:', blob);
+  
+        // Use FormData to upload the file
+        const formData = new FormData();
+        formData.append('file', blob, `photo-${Date.now()}.jpg`);
+  
+        console.log('Uploading to Appwrite Storage...');
+        const fileId = ID.unique();
+        const databases = new Databases(client);
+        const result = await databases.createDocument(
+          '67a48b26003ac5af5e62', // databaseId
+          '67ab9fba001a639fd162', // collectionId
+          fileId, // documentId
+          {neco:"pokus"}, // data
+          
       );
+      console.log(result); */
+      /*   const uploadResponse = await fetch(
+          `${client.config.endpoint}/storage/buckets/${selectedBucket}/files`,
+          {
+            method: 'POST',
+            headers: {
+              'X-Appwrite-Project': client.config.project,
+              'Content-Type': 'multipart/form-data',
+            },
+            body: formData,
+          }
+        ); */
 
-      if (!uploadResponse.ok) {
-        console.error('Upload failed:', await uploadResponse.text());
-        throw new Error('Failed to upload file');
-      }
-
-      const storageResponse = await uploadResponse.json();
-      console.log('File uploaded:', storageResponse);
-
-      console.log('Constructing public URL...');
-      const fileUrl = `${client.config.endpoint}/storage/buckets/${selectedBucket}/files/${storageResponse.$id}/view?project=${client.config.project}&mode=admin`;
-      console.log('Public URL:', fileUrl);
-
-      console.log('Saving to Appwrite Database...');
-      await databases.createDocument(
-        selectedDatabase,
-        collectionId,
-        ID.unique(),
-        {
-          imageUrl: fileUrl,
-          timestamp: new Date().toISOString(),
-        }
-      );
-      console.log('Document saved to database.');
-
-      Alert.alert('Success', 'Image uploaded successfully!');
+      /*  if (!uploadResponse.ok) {
+         console.error('Upload failed:', await uploadResponse.text());
+         throw new Error('Failed to upload file');
+       } */
+      /* 
+            const storageResponse = await uploadResponse.json();
+            console.log('File uploaded:', storageResponse);
       
+            console.log('Constructing public URL...');
+            const fileUrl = `${client.config.endpoint}/storage/buckets/${selectedBucket}/files/${storageResponse.$id}/view?project=${client.config.project}&mode=admin`;
+            console.log('Public URL:', fileUrl);
+      
+            console.log('Saving to Appwrite Database...');
+            await databases.createDocument(
+              selectedDatabase,
+              collectionId,
+              ID.unique(),
+              {
+                imageUrl: fileUrl,
+                timestamp: new Date().toISOString(),
+              }
+            );
+            console.log('Document saved to database.');
+      
+            Alert.alert('Success', 'Image uploaded successfully!'); */
+
       // Reset the photo state and return to the camera view
       setPhoto(null);
       setUploading(false);
@@ -216,7 +229,7 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
             <View style={styles.cameraContainer}>
               <CameraView
                 style={styles.preview}
-                facing="back" 
+                facing="back"
                 ref={cameraRef}
                 onCameraReady={() => setIsCameraReady(true)} // Set camera ready state
               >
