@@ -16,21 +16,21 @@ import Uctenky from './Uctenky';
 import OstatniDoklady from './OstatniDoklady';
 import LoginPage from './LogIn';
 
-// Define the parameter list for the bottom tab navigator
+
 type TabParamList = {
   Doklady: undefined;
   Scanner: undefined;
   Nápověda: undefined;
 };
 
-// Define the stack navigator parameter list
+
 type RootStackParamList = {
   MainApp: undefined;
   Login: undefined;
 };
 
-const Tab = createBottomTabNavigator(); // No type arguments needed
-const Stack = createStackNavigator(); // No type arguments needed
+const Tab = createBottomTabNavigator(); 
+const Stack = createStackNavigator(); 
 
 // Main App Stack (Tabs)
 const DokladyStack = () => {
@@ -50,7 +50,7 @@ const MainApp = () => {
     <Tab.Navigator
       screenOptions={({ route }: { route: RouteProp<TabParamList, keyof TabParamList> }) => ({
         tabBarStyle: {
-          backgroundColor: '#060663', // Tab bar background color
+          backgroundColor: '#060663', 
           height: 80,
         },
         tabBarIcon: ({ color, size }: { color: string; size: number }) => {
@@ -68,13 +68,13 @@ const MainApp = () => {
               iconName = 'help-circle'; // Help circle icon
               break;
             default:
-              iconName = 'alert-circle'; // Default alert circle icon
+              iconName = 'alert-circle'; 
           }
 
           return (
             <MaterialCommunityIcons
               name={iconName}
-              color={color} // Button icon color
+              color={color} 
               size={size}
             />
           );
@@ -86,7 +86,7 @@ const MainApp = () => {
         component={DokladyStack}
         options={{
           headerShown: false,
-          tabBarLabel: 'Home', // Label for the "Doklady" tab
+          tabBarLabel: 'Home', 
         }}
       />
       <Tab.Screen
@@ -94,7 +94,7 @@ const MainApp = () => {
         component={PhotoScreen}
         options={{
           headerShown: false,
-          tabBarLabel: 'Scanner', // Label for the "Scanner" tab
+          tabBarLabel: 'Scanner', 
         }}
       />
       <Tab.Screen
@@ -102,7 +102,7 @@ const MainApp = () => {
         component={SettingsScreen}
         options={{
           headerShown: false,
-          tabBarLabel: 'Help', // Label for the "Nápověda" tab
+          tabBarLabel: 'Help', 
         }}
       />
     </Tab.Navigator>

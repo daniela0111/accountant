@@ -21,15 +21,15 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsLoggedIn }) => {
 
   // Initialize Appwrite client
   const client = new Client()
-    .setEndpoint('https://cloud.appwrite.io/v1') // Replace with your Appwrite endpoint
-    .setProject('67a39d4d001c684cead2'); // Replace with your project ID
+    .setEndpoint('https://cloud.appwrite.io/v1') // Appwrite endpoint
+    .setProject('67a39d4d001c684cead2'); // project ID
 
   const account = new Account(client);
 
   const handleLogin = async () => {
     setError('');
 
-    // Basic validation for email and password
+    //validation for email and password
     if (!email || !password) {
       setError('Email and password are required.');
       return;
@@ -80,7 +80,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsLoggedIn }) => {
     <View style={styles.container}>
       {/* Logo */}
       <Image
-        source={require('./assets/logo.png')} // Ensure the path to your logo is correct
+        source={require('./assets/logo.png')} 
         style={styles.logo}
       />
       <Text style={styles.title}>Accounting Documents</Text>

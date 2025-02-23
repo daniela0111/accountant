@@ -34,10 +34,10 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
   const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState<boolean | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [isCameraReady, setIsCameraReady] = useState(false); // Add camera ready state
-  const [selectedBucket] = useState<string>('67a48afb0025416339a1'); // Replace with your bucket ID
-  const [selectedDatabase] = useState<string>('67a48b26003ac5af5e62'); // Replace with your database ID
-  const [selectedCollection, setSelectedCollection] = useState<string>('67a48b3e002354d58d73'); // Replace with your collection ID
+  const [isCameraReady, setIsCameraReady] = useState(false);
+  const [selectedBucket] = useState<string>('67a48afb0025416339a1'); // bucket ID
+  const [selectedDatabase] = useState<string>('67a48b26003ac5af5e62'); // database ID
+  const [selectedCollection, setSelectedCollection] = useState<string>('67a48b3e002354d58d73'); // collection ID
   const [isModalVisible, setIsModalVisible] = useState(false);
   const cameraRef = useRef<CameraView>(null);
 
@@ -82,7 +82,7 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
       // Resize the image to avoid memory issues
       const resizedImage = await ImageManipulator.manipulateAsync(
         data.uri,
-        [{ resize: { width: 800 } }], // Resize to a smaller width
+        [{ resize: { width: 800 } }], 
         { compress: 0.05, format: ImageManipulator.SaveFormat.JPEG }
       );
 
@@ -216,7 +216,7 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
             <View style={styles.cameraContainer}>
               <CameraView
                 style={styles.preview}
-                facing="back" // Use 'facing' for CameraView
+                facing="back" 
                 ref={cameraRef}
                 onCameraReady={() => setIsCameraReady(true)} // Set camera ready state
               >
@@ -244,25 +244,25 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
           <View style={styles.modalContent}>
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={() => handleDocumentTypeSelection('67ab9e15000feb8037b1')} // Replace with your collection ID for Documents Received
+              onPress={() => handleDocumentTypeSelection('67ab9e15000feb8037b1')} // collection ID for Documents Received
             >
               <Text style={styles.modalButtonText}>Documents Received</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d74')} // Replace with your collection ID for Documents Issued
+              onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d74')} //collection ID for Documents Issued
             >
               <Text style={styles.modalButtonText}>Documents Issued</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={() => handleDocumentTypeSelection('67ab9fba001a639fd162')} // Replace with your collection ID for Receipts
+              onPress={() => handleDocumentTypeSelection('67ab9fba001a639fd162')} //collection ID for Receipts
             >
               <Text style={styles.modalButtonText}>Receipts</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d76')} // Replace with your collection ID for Other Documents
+              onPress={() => handleDocumentTypeSelection('67a48b3e002354d58d76')} //collection ID for Other Documents
             >
               <Text style={styles.modalButtonText}>Other Documents</Text>
             </TouchableOpacity>

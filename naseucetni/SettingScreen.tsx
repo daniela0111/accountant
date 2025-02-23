@@ -8,7 +8,7 @@ import {
   Animated,
   FlatList,
 } from 'react-native';
-import { styles } from './styles/SettingScreenStyles'; // Import styles from the separate file
+import { styles } from './styles/SettingScreenStyles'; 
 
 interface FAQ {
   question: string;

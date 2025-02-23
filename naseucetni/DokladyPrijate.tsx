@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, FlatList, ActivityIndicator } from 'react-native';
 import { ID, Client, Databases } from 'appwrite';
-import { styles } from './styles/DokladyPrijateStyles'; // Import styles from the separate file
+import { styles } from './styles/DokladyPrijateStyles'; 
 
 // Appwrite Configuration
 const client = new Client()
-  .setEndpoint('https://cloud.appwrite.io/v1') // Replace with your Appwrite endpoint
-  .setProject('67a39d4d001c684cead2'); // Replace with your project ID
+  .setEndpoint('https://cloud.appwrite.io/v1') // Appwrite endpoint
+  .setProject('67a39d4d001c684cead2'); // project ID
 
 const databases = new Databases(client);
 
@@ -18,8 +18,8 @@ const DokladyPrijate = () => {
     const fetchDocuments = async () => {
       try {
         const response = await databases.listDocuments(
-          '67a48b26003ac5af5e62', // Replace with your database ID
-          '67ab9e15000feb8037b1' // Replace with your collection ID for Documents Received
+          '67a48b26003ac5af5e62', // database ID
+          '67ab9e15000feb8037b1' // collection ID 
         );
         setDocuments(response.documents);
       } catch (error) {

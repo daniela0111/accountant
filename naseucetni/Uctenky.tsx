@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, Alert, Image } from 'react-native';
 import { ID, Client, Databases } from 'appwrite';
-import { styles } from './styles/UctenkyStyles'; // Import styles from the separate file
+import { styles } from './styles/UctenkyStyles'; 
 
 // Appwrite Configuration
 const client = new Client()
-  .setEndpoint('https://cloud.appwrite.io/v1') // Replace with your Appwrite endpoint
-  .setProject('67a39d4d001c684cead2'); // Replace with your project ID
+  .setEndpoint('https://cloud.appwrite.io/v1') //Appwrite endpoint
+  .setProject('67a39d4d001c684cead2'); //project ID
 
 const databases = new Databases(client);
 
@@ -18,8 +18,8 @@ const Uctenky = () => {
   const fetchReceipts = async () => {
     try {
       const response = await databases.listDocuments(
-        '67a48b26003ac5af5e62', // Replace with your database ID
-        '67ab9fba001a639fd162' // Replace with your collection ID for Receipts
+        '67a48b26003ac5af5e62', //database ID
+        '67ab9fba001a639fd162' //collection ID for Receipts
       );
       setReceipts(response.documents);
     } catch (error) {
@@ -46,7 +46,7 @@ const Uctenky = () => {
     <View style={styles.container}>
       {/* Logo at the top */}
       <Image
-        source={require('./assets/logo.png')} // Replace with the path to your logo image
+        source={require('./assets/logo.png')} 
         style={styles.logo}
       />
       <Text style={styles.title}>Uploaded Receipts</Text>
