@@ -1,6 +1,6 @@
 import { Cloudinary } from "cloudinary-core"
 import { cdConf } from "./cd.config";
-export const sendCN = async (file: string | Blob | undefined) => {
+export const sendCN = async (file) => {
     const cloudinaryCore = new Cloudinary({
         cloud_name: cdConf.cloud_name,
         secure: true,
