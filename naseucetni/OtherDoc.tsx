@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const OstatniDoklady = () => {
+const OtherDoc = () => {
   return (
     <View style={styles.container}>
       <Text>Ostatní Doklady</Text> 
@@ -17,4 +17,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OstatniDoklady;
+export default OtherDoc;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, FlatList, ActivityIndicator } from 'react-native';
 import { ID, Client, Databases } from 'appwrite';
-import { styles } from './styles/DokladyPrijateStyles'; 
+import { styles } from './styles/ReceivedDocStyles'; 
 
 // Appwrite Configuration
 const client = new Client()
@@ -10,7 +10,7 @@ const client = new Client()
 
 const databases = new Databases(client);
 
-const DokladyPrijate = () => {
+const ReceivedDoc = () => {
   const [documents, setDocuments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -61,4 +61,4 @@ const DokladyPrijate = () => {
   );
 };
 
-export default DokladyPrijate;
+export default ReceivedDoc;

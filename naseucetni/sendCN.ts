@@ -1,6 +1,6 @@
 import { Cloudinary } from "cloudinary-core"
 import { cdConf } from "./cd.config";
-export const odeslatCN = async (file) => {
+export const sendCN = async (file: string | Blob | undefined) => {
     const cloudinaryCore = new Cloudinary({
         cloud_name: cdConf.cloud_name,
         secure: true,
@@ -8,7 +8,7 @@ export const odeslatCN = async (file) => {
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "nahraj"); // Replace with your upload preset
+    formData.append("upload_preset", "upload"); // Replace with your upload preset
 
     try {
         const response = await fetch(

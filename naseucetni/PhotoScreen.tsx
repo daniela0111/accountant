@@ -17,7 +17,7 @@ import { ID, Client, Storage, Databases } from 'appwrite';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { styles } from './styles/PhotoScreenStyles';
 import { cloudyUpl } from './cloudinary';
-import { odeslatCN } from './odeslatCN';
+import { sendCN } from './sendCN';
 
 // Appwrite Configuration
 const client = new Client()
@@ -81,7 +81,7 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
         exif: true,
       });
       console.log(">data", data)
-      await odeslatCN(data?.base64)
+      await sendCN(data?.base64)
       // Resize the image to avoid memory issues
       const resizedImage = await ImageManipulator.manipulateAsync(
         data.uri,

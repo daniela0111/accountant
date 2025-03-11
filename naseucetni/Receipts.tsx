@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, Alert, Image } from 'react-native';
 import { ID, Client, Databases } from 'appwrite';
-import { styles } from './styles/UctenkyStyles'; 
+import { styles } from './styles/ReceiptsStyles'; 
 
 // Appwrite Configuration
 const client = new Client()
@@ -10,18 +10,18 @@ const client = new Client()
 
 const databases = new Databases(client);
 
-const DokladyVydane = () => {
-  const [receipts, setIssued] = useState<any[]>([]);
+const Receipts = () => {
+  const [receipts, setReceipts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Fetch receipts from the Receipts collection
-  const fetchIssued = async () => {
+  const fetchReceipts = async () => {
     try {
       const response = await databases.listDocuments(
-        '67a48b26003ac5af5e62', // Replace with your database ID
-        '67b8d456000827d847f1' //Collection ID
+        '67a48b26003ac5af5e62', //database ID
+        '67ab9fba001a639fd162' //collection ID for Receipts
       );
-      setIssued(response.documents);
+      setReceipts(response.documents);
     } catch (error) {
       console.error('Error fetching receipts:', error);
       Alert.alert('Error', 'Failed to fetch receipts');
@@ -31,7 +31,7 @@ const DokladyVydane = () => {
   };
 
   useEffect(() => {
-    fetchIssued();
+    fetchReceipts();
   }, []);
 
   if (loading) {
@@ -49,7 +49,7 @@ const DokladyVydane = () => {
         source={require('./assets/logo.png')} 
         style={styles.logo}
       />
-      <Text style={styles.title}>Uploaded Issued documents</Text>
+      <Text style={styles.title}>Uploaded Receipts</Text>
       <FlatList
         data={receipts}
         keyExtractor={(item) => item.$id}
@@ -64,4 +64,4 @@ const DokladyVydane = () => {
   );
 };
 
-export default DokladyVydane;
+export default Receipts;

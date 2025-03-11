@@ -10,17 +10,17 @@ import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 import HomePage from './HomePage';
 import SettingsScreen from './SettingScreen';
 import PhotoScreen from './PhotoScreen';
-import DokladyVydane from './DokladyVydane';
-import DokladyPrijate from './DokladyPrijate';
-import Uctenky from './Uctenky';
-import OstatniDoklady from './OstatniDoklady';
+import IssuedDoc from './IssuedDoc';
+import ReceivedDoc from './ReceivedDoc';
+import Receipts from './Receipts';
+import OtherDoc from './OtherDoc';
 import LoginPage from './LogIn';
 
 
 type TabParamList = {
-  Doklady: undefined;
+  Documents: undefined;
   Scanner: undefined;
-  Nápověda: undefined;
+  Support: undefined;
 };
 
 
@@ -33,14 +33,14 @@ const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator(); 
 
 // Main App Stack (Tabs)
-const DokladyStack = () => {
+const DocumentsStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Doklady" component={HomePage} options={{ headerShown: false }} />
-      <Stack.Screen name="DokladyVydane" component={DokladyVydane} />
-      <Stack.Screen name="DokladyPrijate" component={DokladyPrijate} />
-      <Stack.Screen name="Uctenky" component={Uctenky} />
-      <Stack.Screen name="OstatniDoklady" component={OstatniDoklady} />
+      <Stack.Screen name="IssuedDoc" component={IssuedDoc} />
+      <Stack.Screen name="ReceivedDoc" component={ReceivedDoc} />
+      <Stack.Screen name="Receipts" component={Receipts} />
+      <Stack.Screen name="OtherDoc" component={OtherDoc} />
     </Stack.Navigator>
   );
 };
@@ -58,13 +58,13 @@ const MainApp = () => {
 
           // Icon name based on the route
           switch (route.name) {
-            case 'Doklady':
+            case 'Documents':
               iconName = 'home'; // Home icon
               break;
             case 'Scanner':
               iconName = 'plus'; // Add icon
               break;
-            case 'Nápověda':
+            case 'Support':
               iconName = 'help-circle'; // Help circle icon
               break;
             default:
@@ -82,8 +82,8 @@ const MainApp = () => {
       })}
     >
       <Tab.Screen
-        name="Doklady"
-        component={DokladyStack}
+        name="Documents"
+        component={DocumentsStack}
         options={{
           headerShown: false,
           tabBarLabel: 'Home', 
@@ -98,7 +98,7 @@ const MainApp = () => {
         }}
       />
       <Tab.Screen
-        name="Nápověda"
+        name="Support"
         component={SettingsScreen}
         options={{
           headerShown: false,
