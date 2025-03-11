@@ -6,10 +6,10 @@ import { styles } from './styles/HomePageStyles';
 
 // Define the type for the navigation stack
 type RootStackParamList = {
-  DokladyVydane: undefined;
-  DokladyPrijate: undefined;
-  Uctenky: undefined;
-  OstatniDoklady: undefined;
+  IssuedDoc: undefined;
+  ReceivedDoc: undefined;
+  Receipts: undefined;
+  OtherDoc: undefined;
   HomePage: undefined; 
 };
 
@@ -26,34 +26,34 @@ const HomePage = () => {
       <View style={styles.buttonsContainer}>
         <View style={styles.row}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('DokladyVydane')} 
+            onPress={() => navigation.navigate('IssuedDoc')} 
           >
             <View style={{ alignItems: 'center' }}> 
               <Image source={require('./assets/dokladyvydane.png')} />
-              <Text style={styles.buttonText}>Doklady vydané</Text>
+              <Text style={styles.buttonText}>Issued Document</Text>
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.navigate('DokladyPrijate')}>
+          <TouchableOpacity onPress={() => navigation.navigate('ReceivedDoc')}>
             <View style={{ alignItems: 'center' }}> 
               <Image source={require('./assets/dokladyprijate.png')} />
-              <Text style={styles.buttonText}>Doklady přijaté</Text>
+              <Text style={styles.buttonText}>Received Document</Text>
             </View>
           </TouchableOpacity>
         </View>
 
         <View style={styles.row}>
-          <TouchableOpacity onPress={() => navigation.navigate('Uctenky')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Receipts')}>
             <View style={{ alignItems: 'center' }}> 
               <Image source={require('./assets/uctenky.png')} />
-              <Text style={styles.buttonText}>Účtenky</Text>
+              <Text style={styles.buttonText}>Receipts</Text>
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.navigate('OstatniDoklady')}>
+          <TouchableOpacity onPress={() => navigation.navigate('OtherDoc')}>
             <View style={{ alignItems: 'center' }}> 
               <Image source={require('./assets/ostatnidoklady.png')} />
-              <Text style={styles.buttonText}>Ostatní Doklady</Text>
+              <Text style={styles.buttonText}>Other Document</Text>
             </View>
           </TouchableOpacity>
         </View>
