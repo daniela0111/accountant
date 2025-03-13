@@ -18,8 +18,8 @@ const IssuedDoc = () => {
   const fetchIssued = async () => {
     try {
       const response = await databases.listDocuments(
-        '67a48b26003ac5af5e62', // Replace with your database ID
-        '67b8d456000827d847f1' //Collection ID
+        '67a48b26003ac5af5e62', 
+        '67b8d456000827d847f1' 
       );
       setIssued(response.documents);
     } catch (error) {
@@ -44,7 +44,7 @@ const IssuedDoc = () => {
 
   return (
     <View style={styles.container}>
-      {/* Logo at the top */}
+      {}
       <Image
         source={require('./assets/logo.png')} 
         style={styles.logo}

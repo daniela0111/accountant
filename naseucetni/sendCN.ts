@@ -8,7 +8,7 @@ export const sendCN = async (file) => {
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "upload"); // Replace with your upload preset
+    formData.append("upload_preset", "upload"); 
 
     try {
         const response = await fetch(

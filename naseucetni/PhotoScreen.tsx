@@ -28,7 +28,7 @@ const storage = new Storage(client);
 const databases = new Databases(client);
 
 interface PhotoScreenProps {
-  navigation: any; // Navigation prop for navigating to other screens
+  navigation: any; 
 }
 
 const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
@@ -231,13 +231,13 @@ const PhotoScreen: React.FC<PhotoScreenProps> = ({ navigation }) => {
                 style={styles.preview}
                 facing="back"
                 ref={cameraRef}
-                onCameraReady={() => setIsCameraReady(true)} // Set camera ready state
+                onCameraReady={() => setIsCameraReady(true)} 
               >
                 <View style={styles.buttonContainer}>
                   <TouchableOpacity
                     style={styles.captureButton}
                     onPress={handleTakePicture}
-                    disabled={!isCameraReady} // Disable button until camera is ready
+                    disabled={!isCameraReady} 
                   />
                 </View>
               </CameraView>

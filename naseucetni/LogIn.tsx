@@ -43,17 +43,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsLoggedIn }) => {
         sessions = await account.getSession('current');
       } catch (sessionErr: any) {
         if (sessionErr.message.includes('missing scope')) {
-          // If the session check fails due to missing scope, assume no session exists
+          // If the session check fails due to missing scope -> no session exists
           sessions = null;
         } else {
-          throw sessionErr; // Re-throw other errors
+          throw sessionErr; 
         }
       }
 
       if (sessions) {
-        // If a session exists, log the user in automatically
+        // log the user in automatically
         console.log('User is already logged in.');
-        setIsLoggedIn(true); // Update login state
+        setIsLoggedIn(true); 
         return;
       }
 
@@ -102,7 +102,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsLoggedIn }) => {
         placeholderTextColor="#060663"
       />
       {error && <Text style={styles.error}>{error}</Text>}
-      {/* Custom Log In Button */}
+      {}
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>Log In</Text>
       </TouchableOpacity>

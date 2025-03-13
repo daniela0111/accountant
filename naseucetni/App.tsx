@@ -32,7 +32,7 @@ type RootStackParamList = {
 const Tab = createBottomTabNavigator(); 
 const Stack = createStackNavigator(); 
 
-// Main App Stack (Tabs)
+// Main App Stack 
 const DocumentsStack = () => {
   return (
     <Stack.Navigator>
@@ -59,13 +59,13 @@ const MainApp = () => {
           // Icon name based on the route
           switch (route.name) {
             case 'Documents':
-              iconName = 'home'; // Home icon
+              iconName = 'home'; 
               break;
             case 'Scanner':
-              iconName = 'plus'; // Add icon
+              iconName = 'plus'; 
               break;
             case 'Support':
-              iconName = 'help-circle'; // Help circle icon
+              iconName = 'help-circle'; 
               break;
             default:
               iconName = 'alert-circle'; 
@@ -111,7 +111,7 @@ const MainApp = () => {
 
 // Root App Component
 const App: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
 
   return (
     <>
@@ -135,7 +135,7 @@ const App: React.FC = () => {
               {(props: StackScreenProps<RootStackParamList, 'Login'>) => (
                 <LoginPage
                   {...props}
-                  setIsLoggedIn={setIsLoggedIn} // Pass the setIsLoggedIn function to LoginPage
+                  setIsLoggedIn={setIsLoggedIn} 
                 />
               )}
             </Stack.Screen>

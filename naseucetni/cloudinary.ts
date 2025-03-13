@@ -8,7 +8,7 @@ export const cloudyUpl = async (pathname: string) => {
         api_key: cdConf.API_key,
         api_secret: cdConf.API_secret
     });
-    // Upload an image
+    // Upload image
     const uploadResult = await cloudinary.uploader
         .upload(
             pathname, {
@@ -20,3 +20,4 @@ export const cloudyUpl = async (pathname: string) => {
         });
     console.log(">result >upload>", uploadResult)
 }
+

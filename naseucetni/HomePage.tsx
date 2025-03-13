@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { styles } from './styles/HomePageStyles'; 
 
-// Define the type for the navigation stack
+
 type RootStackParamList = {
   IssuedDoc: undefined;
   ReceivedDoc: undefined;
@@ -13,7 +13,7 @@ type RootStackParamList = {
   HomePage: undefined; 
 };
 
-// Define the navigation prop type for the HomePage
+
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'HomePage'>;
 
 const HomePage = () => {
